@@ -4,14 +4,16 @@
 
 This repository contains three main components:
 
-1) HySGen: An efficient probabilistic generative model for discovering node clusters/communities in hypergraphs. For the details of the model and the community inference algorithm, please see our paper*.
-
-2) HGraph: A fast, reliable, and comprehensive C++ data structure for undirected, unweighted hypergraphs.
-
-3) Three hypergraphs extracted from real-world data, uploaded in the "Data" directory. Please see our paper* for more information.
+1) HySGen: An efficient probabilistic generative model for discovering node 
+      clusters/communities in hypergraphs. For the details of the model and 
+      the community inference algorithm, please see our paper*.
+2) HGraph: A fast, reliable, and comprehensive C++ data structure for 
+      undirected, unweighted hypergraphs.
+3) Three hypergraphs extracted from real-world data, uploaded in the "Data" 
+      directory. Please see our paper* for more information.
 
 Please cite our paper upon using any of those components:
-* Bahman Pedrood, Carlotta Domeniconi, and Kathryn B. Laskey. "Hypergraph Simultaneous Generators." AISTATS 2022.
+* B. Pedrood, C. Domeniconi, and K. Laskey. "Hypergraph Simultaneous Generators." AISTATS 2022.
 
 /////////////////////////////////////////////////////////////////////////////
 
