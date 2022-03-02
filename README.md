@@ -1,5 +1,5 @@
 ========================================================================
-    #Hypergraph Simultaneous Generators (HySGen)
+    Hypergraph Simultaneous Generators (HySGen)
 ========================================================================
 
 This repository contains three main components:
