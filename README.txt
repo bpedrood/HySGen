@@ -17,18 +17,30 @@ Please cite our paper upon using any of those components:
 
 /////////////////////////////////////////////////////////////////////////////
 
-The code in this project is developed on top of the SNAP [(c) 2007-2019, Jure Leskovec] open-source graph analysis library. To facilitate the usage for SNAP users, I maintained the structure and code standarads as recommended in SNAP. The directory structure of this project is as follows below:
+The code in this project is developed on top of the SNAP [(c) 2007-2019, 
+Jure Leskovec] open-source graph analysis library. To facilitate the usage 
+for SNAP users, I maintained the structure and code standarads as recommended 
+in SNAP. The directory structure of this project is as follows below:
 
 snap: 
-        An intact copy of the original SNAP library's source code, which modules are used in this project.
+        An intact copy of the original SNAP library's source code, which 
+        modules are used in this project.
 local_snap: 
-        We developed our classes in this directory. The subdirectories and file structures are chosen this way for maximum consistency with SNAP.
+        We developed our classes in this directory. The subdirectories 
+        and file structures are chosen this way for maximum consistency 
+        with SNAP.
 local_snap/snap-adv:
         HySGen's implemented classes and functions for community inference.
 local_snap/snap-core:
-        HGraph data structure is implemented in this directory. To see the details of the function and classes, see the files with "loc_graph" and "loc_subgraph" names.
+        HGraph data structure is implemented in this directory. To see 
+        the details of the function and classes, see the files with 
+        "loc_graph" and "loc_subgraph" names.
 
-Like other SNAP projects, this code works under Windows with Cygwin with GCC, Mac OS X, Linux and other Unix variants with GCC. To use with Visual Studio, you have to create a new project for this project. Make sure that a C++ compiler is installed on the system. Makefiles are provided, so you can complie the code in the command line with the following command: 
+Like other SNAP projects, this code works under Windows with Cygwin with GCC, 
+Mac OS X, Linux and other Unix variants with GCC. To use with Visual Studio, 
+you have to create a new project for this project. Make sure that a C++ compiler 
+is installed on the system. Makefiles are provided, so you can complie the code 
+in the command line with the following command: 
     make all
 
 /////////////////////////////////////////////////////////////////////////////
