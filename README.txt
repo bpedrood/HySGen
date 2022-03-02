@@ -64,6 +64,7 @@ Parameters:
    -sr: Step-size reduction ratio for backtracking line search (Default: 0.5).
 
 /////////////////////////////////////////////////////////////////////////////
+
 Usage:
 
 Discover 309 communities from the NSF collaboration hypergraph.
