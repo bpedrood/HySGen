@@ -6,9 +6,8 @@ class THGraph;
 /// Pointer to a hypergraph graph (THGraph)
 typedef TPt<THGraph> PHGraph;
 
-
 //#//////////////////////////////////////////////
-/// Hypergraph. ##THGraph::Class
+/// Hypergraph.
 class THGraph {
 public:
   typedef THGraph TNet;
@@ -234,7 +233,7 @@ public:
   int AddNode(int NId = -1, TStr NName = "");
   /// Adds a node of ID NodeI.GetId() to the graph.
   int AddNode(const TNodeI& NodeI) { return AddNode(NodeI.GetId(), NodeI.GetName()); }
-  /// Deletes node of ID NId from the graph. ##THGraph::DelNode
+  /// Deletes node of ID NId from the graph. 
   void DelNode(const int& NId);
   /// Deletes node of ID NodeI.GetId() from the graph.
   void DelNode(const TNode& NodeI) { DelNode(NodeI.GetId()); }
