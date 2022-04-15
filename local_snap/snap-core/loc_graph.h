@@ -19,7 +19,7 @@ public:
     TInt Id;
     TStr Name;
     TIntV EIdV; // Vector of Edge IDs
-    THash<TInt, TInt> NbrNIdENumH; // [Hash]Set of neighboring nodes <Neigh_NodeID, NumberOf"Edges"Connecting_this_to_NeighNode>
+    THash<TInt, TInt> NbrNIdENumH; 
   public:
     TNode() : Id(-1), Name(""), EIdV(), NbrNIdENumH() { }
     TNode(const int& NId) : Id(NId), Name(""), EIdV(), NbrNIdENumH() { }
@@ -35,21 +35,17 @@ public:
     int GetDeg() const { return EIdV.Len(); }
     int GetInDeg() const { return GetDeg(); }
     int GetOutDeg() const { return GetDeg(); }
-    // int GetInNId(const int& NodeN) const { return GetNbrNId(NodeN); }
-    // int GetOutNId(const int& NodeN) const { return GetNbrNId(NodeN); }
     int GetNbrEId(const int& NE) const { return EIdV[NE]; } // Returns N-th neighboring edge.
-    int GetNbrNId(const int& NN) const { return NbrNIdENumH.GetKey(NN); } // Returns N-th neighboring node (Note: [] for hash works with KeyId's).
+    int GetNbrNId(const int& NN) const { return NbrNIdENumH.GetKey(NN); } // Returns N-th neighboring node.
     bool IsNbrNId(const int& NId) const { return HasNeiN(NId); }
     bool IsInNId(const int& NId) const { return HasNeiN(NId); }
     bool IsOutNId(const int& NId) const { return HasNeiN(NId); }
-    // void PackOutNIdV() { NIdV.Pack(); }
-    // void PackNIdV() { NIdV.Pack(); }
     void SortNIdV() { NbrNIdENumH.SortByKey();}
-    bool HasNeiN(const TNode &Node) const { return NbrNIdENumH.IsKey(Node.GetId()); } //Checks "this" for a neighboring node Node.
-    bool HasNeiN(const int& NId) const { return NbrNIdENumH.IsKey(NId); } //Checks "this" for a neighboring node Node.
+    bool HasNeiN(const TNode &Node) const { return NbrNIdENumH.IsKey(Node.GetId()); } //Checks for a neighboring node Node.
+    bool HasNeiN(const int& NId) const { return NbrNIdENumH.IsKey(NId); } //Checks for a neighboring node Node.
     void UpdEInfo(const int& EId, const TIntSet& ENodesHS);
     void GetEIDs(TIntV& NeiEIdV) const { NeiEIdV=EIdV; } // Returns the edges containing the Node.
-    void GetEIDs(TIntSet& NeiEIdH) const {TIntSet EH(EIdV); NeiEIdH=EH; }// NeiEIdH.AddKeyV(EIdV); } // Returns the edges containing the Node.
+    void GetEIDs(TIntSet& NeiEIdH) const {TIntSet EH(EIdV); NeiEIdH=EH; } // Returns the edges containing the Node.
     int GetEdges() const { return GetDeg(); } // Returns the number of edges containing the Node.
     int Get2Edges() const { return (NbrNIdENumH.Len() * (NbrNIdENumH.Len()-1))/2; } // Returns the number of edges containing the Node.
     void AddNeighbor(const int& NId) {
@@ -79,13 +75,11 @@ public:
         return true;
       }
       return false;
-//      return (*ThisNNeiV == *InpNNeiV && EIdV == Node.EIdV);
     }
 //    ~TNode() {}
     friend class THGraph;
-    //friend class TUNGraphMtx;// Bahman: Later must be handled as THGraphMtx
   };
-  /// Node iterator. Only forward iteration (operator++) is supported.
+  /// Node Iterator
   class TNodeI {
   private:
     typedef THash<TInt, TNode>::TIter THashIter;
@@ -95,9 +89,7 @@ public:
     TNodeI(const THashIter& NodeHIter) : NodeHI(NodeHIter) { }
     TNodeI(const TNodeI& NodeI) : NodeHI(NodeI.NodeHI) { }
     TNodeI& operator = (const TNodeI& NodeI) { NodeHI = NodeI.NodeHI; return *this; }
-    /// Increment iterator.
     TNodeI& operator++ (int) { NodeHI++; return *this; }
-    /// Decrement iterator.
     TNodeI& operator-- (int) { NodeHI--; return *this; }
     bool operator < (const TNodeI& NodeI) const { return NodeHI < NodeI.NodeHI; }
     bool operator == (const TNodeI& NodeI) const { return NodeHI == NodeI.NodeHI; }
@@ -116,7 +108,7 @@ public:
     int GetInDeg() const { return NodeHI.GetDat().GetInDeg(); }
     /// Returns out-degree of the current node (returns same as value GetDeg() since the graph is undirected).
     int GetOutDeg() const { return NodeHI.GetDat().GetOutDeg(); }
-    /// Returns ID of NodeN-th neighboring node. ##THGraph::TNodeI::GetNbrNId
+    /// Returns ID of NodeN-th neighboring node.
     int GetNbrNId(const int& NodeN) const { return NodeHI.GetDat().GetNbrNId(NodeN); }
     /// Tests whether node with ID NId points to the current node.
     bool HasNeiInN(const int& NId) const { return NodeHI.GetDat().IsInNId(NId); }
@@ -125,7 +117,7 @@ public:
     /// Tests whether node with ID NId is a neighbor of the current node.
     bool HasNeiN(const int& NId) const { return NodeHI.GetDat().IsNbrNId(NId); }
     /// Returns number of [2]edges if being flatten to a regular graph.
-    int Get2Edges() const { return NodeHI.GetDat().Get2Edges(); } // Returns the number of edges containing the Node.
+    int Get2Edges() const { return NodeHI.GetDat().Get2Edges(); }
     /// Query a neighboring edge by Edge Id.
     bool HasEdge(const int& EId) {
       TIntV EV = NodeHI.GetDat().EIdV;
@@ -138,11 +130,8 @@ public:
   };
   class TEdge {
   private:
-//  typedef THash<TInt, TNode> TNodeH;
     TInt Id;
-//    TNodeH NeiNodeH;
     TIntSet NeiNIdSH;
-//    const
     THGraph* Graph;
   public:
     TEdge() { TEdge(NULL); }
@@ -165,17 +154,10 @@ public:
     /// Gets the number of including nodes.
     int Len() const { return NeiNIdSH.Len(); }
     /// Gets the nodes included in the edge.
-//    TNodeH& GetNodes() const { return NeiNodeH; }
     void GetNodesV(TIntV& NeiV) const { NeiNIdSH.GetKeyV(NeiV); }
     /// Gets a vector of including nodes' Ids.
     void GetNbrNodes(TIntV& NIdsV) { NeiNIdSH.GetKeyV(NIdsV);}
     bool HasNode(const TNode& Node) const { return NeiNIdSH.IsKey(Node.GetId()); } // Checks the edge for node Node.
-//    /// Returns an iterator referring to the first node in the edge.
-//    TNodeI BegNI() const { return TNodeI(NeiNIdSH.BegI()); }
-//    /// Returns an iterator referring to the past-the-end node in the edge.
-//    TNodeI EndNI() const { return TNodeI(NeiNIdSH.EndI()); }
-//    /// Returns an iterator referring to the node of ID NId in the edge.
-//    TNodeI GetNI(const int& NId) const { return TNodeI(NeiNIdSH.GetI(NId)); }
     void UpdNEInfo(const TIntSet& ENodesHS);
 //    ~TEdge() {}
     friend class THGraph;
@@ -189,49 +171,38 @@ public:
     TEdgeI() : EdgeHI() { }
     TEdgeI(const THashIter& EdgeHIter) : EdgeHI(EdgeHIter) { }
     TEdgeI(const TEdgeI& EdgeI) : EdgeHI(EdgeI.EdgeHI) { }
-    /// Useful Operators.
     TEdgeI& operator = (const TEdgeI& EdgeI) { if (this!=&EdgeI) { EdgeHI=EdgeI.EdgeHI; }  return *this; }
-    TEdgeI& operator++ (int) { EdgeHI++; return *this; }
+    TEdgeI& operator ++ (int) { EdgeHI++; return *this; }
     bool operator < (const TEdgeI& EdgeI) const { return EdgeHI < EdgeI.EdgeHI; }
     bool operator == (const TEdgeI& EdgeI) const { return EdgeHI == EdgeI.EdgeHI; }
     /// Gets edge ID.
     int GetId() const { return EdgeHI.GetDat().GetId(); }
     TEdge GetEdge() {return EdgeHI.GetDat();}
     /// Gets the nodes included in the edge.
-//    THash<TInt, TNode> GetNodes() const { return EdgeHI.GetDat().GetNodes(); }
     void GetNodesV(TIntV& NeiV) const { EdgeHI.GetDat().GetNodesV(NeiV); }
     /// Get ID of Neighboring Nodes of the edge with id EId
     void GetNbrNodes(TIntV& NIDV) { EdgeHI.GetDat().GetNbrNodes(NIDV); }
-//    /// Returns an iterator referring to the first node in the edge.
-//    TNodeI BegNI() const { return EdgeHI.GetDat().BegNI(); }
-//    /// Returns an iterator referring to the past-the-end node in the edge.
-//    TNodeI EndNI() const { return EdgeHI.GetDat().EndNI(); }
-//    /// Returns an iterator referring to the node of ID NId in the edge.
-//    TNodeI GetNI(const int& NId) const { return EdgeHI.GetDat().GetNI(NId); }
     /// Gets the number of including nodes.
     int Len() const { return EdgeHI.GetDat().Len(); }
     int GetDeg() const { return Len(); }
-    
     friend class THGraph;
   };
 private:
   TCRef CRef;
   TInt MxNId, MxEId, NEdges, N2Edges;
-  THash<TInt, TNode> NodeH; // <Node_ID, TNode object>
-  THash<TInt, TEdge> EdgeH; // <Edge_ID, TEdge object (Set_of_nodes_in_edge+else)>
+  THash<TInt, TNode> NodeH; 
+  THash<TInt, TEdge> EdgeH; 
 private:
   TNode& GetNode(const int& NId) { return NodeH.GetDat(NId); }
   const TNode& GetNode(const int& NId) const { return NodeH.GetDat(NId); }
   TEdge& GetEdge(const int& EId) { return EdgeH.GetDat(EId); }
   const TEdge& GetEdge(const int& EId) const { return EdgeH.GetDat(EId); }
   int AssertNodes(const TIntSet& NodesIS);
-  
   /// To be utilized for preventing addition of duplicate hyperedges.
   static void TIntersect(TIntSet& S, const TIntSet& S2) {
     /// S <- Intersect(S, S2)
     TIntV MarkDel(S.Len(),0); //todo maybe remove if inneffective (comparing to before)
     for (THashSetKeyI<TInt> i = S.BegI(); i < S.EndI(); i++) {
-//      if (! S2.IsKey(i.GetKey())) { S.DelKey(i.GetKey()); }
       if (!S2.IsKey(i.GetKey())) { MarkDel.Add(i.GetKey()); }
     }
     if (MarkDel.Len() > 0) { for (int j = 0; j < MarkDel.Len(); j++) S.DelKey(MarkDel[j]); }
@@ -247,7 +218,7 @@ public:
   void Save(TSOut& SOut) const { MxNId.Save(SOut); MxEId.Save(SOut); NEdges.Save(SOut); N2Edges.Save(SOut); NodeH.Save(SOut); EdgeH.Save(SOut); }
   /// Static constructor that returns a pointer to the graph. Call: PUNGraph Graph = THGraph::New().
   static PHGraph New() { return new THGraph(); }
-  /// Static constructor that returns a pointer to the graph and reserves enough memory for Nodes nodes and Edges edges. ##THGraph::New
+  /// Static constructor that returns a pointer to the graph and reserves enough memory for Nodes nodes and Edges edges. 
   static PHGraph New(const int& Nodes, const int& Edges) { return new THGraph(Nodes, Edges); }
   /// Static constructor that loads the graph from a stream SIn and returns a pointer to it.
   static PHGraph Load(TSIn& SIn) { return PHGraph(new THGraph(SIn)); }
@@ -255,19 +226,14 @@ public:
   bool HasFlag(const TGraphFlag& Flag) const;
   THGraph& operator = (const THGraph& Graph) {
     if (this!=&Graph) { MxNId=Graph.MxNId; MxEId=Graph.MxEId; NEdges=Graph.NEdges; N2Edges=Graph.N2Edges; NodeH=Graph.NodeH; EdgeH=Graph.EdgeH; } return *this; }
-  
   /// Returns the number of nodes in the graph.
   int GetNodes() const { return NodeH.Len(); }
-  /// Adds a node of ID NId to the network, noop if the node already exists. ##TUNGraph::AddNodeUnchecked
+  /// Adds a node of ID NId to the network, noop if the node already exists. 
   int AddNodeUnchecked(int NId = -1, TStr NName = "");
-  /// Adds a node of ID NId and Name NName to the graph. ##THGraph::AddNode
+  /// Adds a node of ID NId and Name NName to the graph. 
   int AddNode(int NId = -1, TStr NName = "");
   /// Adds a node of ID NodeI.GetId() to the graph.
   int AddNode(const TNodeI& NodeI) { return AddNode(NodeI.GetId(), NodeI.GetName()); }
-  // /// Adds a node of ID NId to the graph and create edges to all nodes in vector NbrNIdV. ##THGraph::AddNode-1
-  // int AddNode(const int& NId, const TIntV& NbrNIdV);
-  // /// Adds a node of ID NId to the graph and create edges to all nodes in vector NIdVId in the vector pool Pool. ##THGraph::AddNode-2
-  // int AddNode(const int& NId, const TVecPool<TInt>& Pool, const int& NIdVId);
   /// Deletes node of ID NId from the graph. ##THGraph::DelNode
   void DelNode(const int& NId);
   /// Deletes node of ID NodeI.GetId() from the graph.
@@ -282,11 +248,8 @@ public:
   TNodeI GetNI(const int& NId) const { return TNodeI(NodeH.GetI(NId)); }
   /// Returns an ID that is larger than any node ID in the graph.
   int GetMxNId() const { return MxNId; }
-  
   int GetVNbrNodes(int& NId) const { return GetNode(NId).GetNbrNodes(); }
-  
   void GetVNbrEdges(int& NId, TIntV& EIDV) const { return GetNode(NId).GetNbrEdges(EIDV); }
-  
   /// Returns the number of edges in the graph.
   int GetEdges() const { return EdgeH.Len(); }
   /// Returns the number of equivalent 2-edges in the graph.
@@ -299,35 +262,14 @@ public:
     NodeIdsHS.GetKeyV(NIdV);
     return AddEdge(NIdV);
   }
-//  int AddEdge(const THash<TInt, TNode>& NodeIdsHS){
-//    int _EId = -1;
-//    return AddEdge(NodeIdsHS, _EId);
-//  }
-//  int AddEdge(const THash<TInt, TNode>& NodeIdsHS, int& EId);
-//  int AddEdge(const TIntV& NodeV);
   int AddEdge(const TIntSet& NIdH, int& EId);
   int AddEdge(const TIntSet& NIdH){ int _EId = -1; return AddEdge(NIdH, _EId); }
   int AddEdge(const TIntV& NodeV) { TIntSet NodeIdsHS(NodeV); return AddEdge(NodeIdsHS); }
-//  int AddEdge(const TIntSet& NIdH, const int& EId){
-//    THash<TInt, TNode> NodeIdsHS;
-//    NodeIdsHS(NIdH.Len());
-//    for (int i=0; i < NIdH.Len(); i++) {
-//      if (!IsNode(NIdH[i])) { AddNode(NIdH[i]); }
-//      NodeIdsHS.AddDat(NIdH[i], GetNode(NIdH[i]));
-//    }
-//    return AddEdge(NodeIdsHS, EId);
-//  }
   int AddEdge(const TEdgeI& EI){
     int _EId = EI.GetId();
     return AddEdge(EI.EdgeHI.GetDat().NeiNIdSH, _EId);
   }
   int AddEdge(const TEdgeI& EI, int& EId){ return AddEdge(EI.EdgeHI.GetDat().NeiNIdSH, EId); }
-  // /// Adds an edge from node IDs SrcNId to node DstNId to the graph without performing checks.
-  // int AddEdgeUnchecked(const int& SrcNId, const int& DstNId);
-  // /// Adds an edge between node IDs SrcNId and DstNId to the graph. If nodes do not exists, create them.
-  // int AddEdge2(const int& SrcNId, const int& DstNId);
-//  /// Adds an edge between EdgeI.GetSrcNId() and EdgeI.GetDstNId() to the graph.
-//  int AddEdge(const TEdgeI& EdgeI) { return AddEdge(EdgeI.GetSrcNId(), EdgeI.GetDstNId()); }
   /// Deletes the edge with id=EId.
   void DelEdge(const int& EId);
   void DelEdge(const TEdge& Edge) { DelEdge(Edge.Id); }
@@ -335,15 +277,12 @@ public:
   bool IsEdgeId(const int& EId) const { return EdgeH.IsKey(EId); }
   /// Tests whether an edge exactly with the nodes specified in the input.
   bool IsEdge(const TIntSet& NIdH);
-//  bool IsEdge(const THash<TInt, TNode>& EdgeIdS) const;
   /// Returns an iterator referring to the first edge in the graph.
   TEdgeI BegEI() const { return TEdgeI(EdgeH.BegI()); }
   /// Returns an iterator referring to the past-the-end edge in the graph.
   TEdgeI EndEI() const { return TEdgeI(EdgeH.EndI()); }
   /// Returns an iterator referring to edge with edge ID EId.
   TEdgeI GetEI(const int& EId) const { return TEdgeI(EdgeH.GetI(EId)); }
-//  /// Returns an iterator referring to edge (SrcNId, DstNId) in the graph.
-//  TEdgeI GetEI(const int& SrcNId, const int& DstNId) const { return GetEI(GetEId(SrcNId, DstNId)); }
   /// Returns an ID of a random node in the graph.
   int GetRndNId(TRnd& Rnd=TInt::Rnd) { return NodeH.GetKey(NodeH.GetRndKeyId(Rnd, 0.8)); }
   /// Returns an interator referring to a random node in the graph.
@@ -362,23 +301,19 @@ public:
   bool Empty() const { return GetNodes()==0; }
   /// Deletes all nodes and edges from the graph.
   void Clr() { MxNId=0; MxEId=0; NEdges=0; N2Edges=0; NodeH.Clr(); EdgeH.Clr(); }
-//  /// Sorts the adjacency lists of each node
-//  void SortNodeAdjV() { for (TNodeI NI = BegNI(); NI < EndNI(); NI++) { NI.SortNIdV();} }
   /// Reserves memory for a graph of Nodes nodes and Edges edges.
   void Reserve(const int& Nodes, const int& Edges) {
     if (Nodes>0) { NodeH.Gen(Nodes/2); } if (Edges>0) { EdgeH.Gen(Edges/2); }
   }
-  /// Defragments the graph. ##THGraph::Defrag
+  /// Defragments the graph. 
   void Defrag(const bool& OnlyNodeLinks=false);
-  /// Checks the graph data structure for internal consistency. ##THGraph::IsOk
+  /// Checks the graph data structure for internal consistency. 
   bool IsOk(const bool& ThrowExcept=true) const;
   /// Print the graph in a human readable form to an output stream OutF.
   void Dump(FILE *OutF=stdout) const;
-  /// Returns a small graph on 5 nodes and 5 edges. ##THGraph::GetSmallGraph
+  /// Returns a small graph on 5 nodes and 5 edges. 
   static PHGraph GetSmallGraph();
   void PrintEdge(const int EId);
-  
-//  friend class THGraphMtx;// Bahman: Must be handled later
   friend class TPt<THGraph>;
 };
 
