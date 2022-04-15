@@ -22,8 +22,6 @@ PHGraph GetSubGraph(const TPt<THGraph>& Graph, const TIntV& NIdV, const double& 
     EI.GetEdge().GetNbrNodes(NeiNIdV);
     for (int e=0; e < NeiNIdV.Len(); e++) {
       if (!NewGraph.IsNode(NeiNIdV[e])) { EdgeAddable = false; break; }
-//    for (THGraph::TNodeI NeiNI = EI.BegNI(); NeiNI < EI.EndNI(); NeiNI++) {
-//      if (!NewGraph.IsNode(NeiNI.GetId())) { EdgeAddable = false; break; }
     }
     if (EdgeAddable) { NewGraph.AddEdge(EI); }
   }
