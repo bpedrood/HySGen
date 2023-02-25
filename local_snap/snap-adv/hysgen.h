@@ -28,7 +28,7 @@ public:
   static void GetBinLocs(const int& DecNum, TIntV& LocsV, const TIntV& NodMapV);
   
   static double Min(double	N1, double N2) {
-    return N1 < N2 ? N1 : N2;
+    return (N1 < N2) ? N1 : N2;
   }
   static bool IsEqual(const double Num1, const double Num2) {
     return abs(Num1 - Num2) < TFlt::Eps;
@@ -80,7 +80,7 @@ private:
                       const TIntFltH& GradUH, double& StepSize);
   bool AcceptStepSA(const int &UID, const TIntFltH &SNew, const int &Iter,
                     const int &MaxIter, const double &SAParamK);
-  bool RmvBadDirections(const int &UId, TIntFltH &GradH);
+  bool RmvWeakDirections(const int &UId, TIntFltH &GradH);
   void InitEdgeProb();
   void UpdateUEdgesProb(const int& UId, const int& CId, const double& SUNew);
   void InitPrAllEdgesS(const double& DefVal, const bool& IsEqualComms=false);
@@ -177,7 +177,6 @@ public:
   TInt GetNumComs() { return NumComs; }
   void SetCmtyVV(const TVec<TIntV>& CmtyVV);
   double Likelihood();
-  double Likelihood(const int UID, const TIntFltH& SU);
   double LikelihoodForRow(const int UID);
   double LikelihoodForRow(const int UID, const TIntFltH &SU);
   void GradientForRow(const int UId, TIntFltH &GradNod);
@@ -206,8 +205,9 @@ public:
   void GetCmtyVVUnSorted(TVec<TIntV>& CmtyVV, const double Thres, const int MinSz = 3);
   
   double GetStepSizeByLineSearch(const int UID, const TIntFltH &DeltaH,
-                                 TIntFltH &SearchVecH, const double &stepSize,
-                                 const double &CtrlParam, const double &ReductionRatio,
+                                 const double &stepSize,
+                                 const double &CtrlParam,
+                                 const double &ReductionRatio,
                                  const int MaxIter);
   
   int MLEGradAscent(const double& Thres, const int& MaxIter, const TStr PlotNm,
@@ -261,12 +261,12 @@ public:
     }
     return 1.0 - ProbNotEdgH.GetDat(EId);
   }
-  /// Computes Prob(EId) when SU is different from S[UId].
+  /// Computes Prob(EId) when SUNewH is different from S[UId].
   /// @param PrEOutCH is an output vector of \prod_{v \in e} S_vc for each c
-  double GetPrE(const int &EId, const int &UId, TIntFltH &PrEOutCH,
-                       const TIntFltH &SU);
+  double GetPrE(const int &EId, const int &UId, const TIntFltH &SUNewH,
+                TIntFltH &PrEOutCH);
   
-  double GetPrEPrecision(const TIntFltH &ECH, TVec<TFltV> &DPMatVV,
+  static double GetPrEPrecision(const TIntFltH &ECH, TVec<TFltV> &DPMatVV,
                          const double PrENoise);
   
   double inline GetENoiseProb(const int Size) {
@@ -298,6 +298,10 @@ public:
       for (TIntFltH::TIter HI = ProdH.BegI(); HI < ProdH.EndI(); HI++) {
         PrNotE *= 1.0 - HI.GetDat();
       }
+    } else {
+      if (ProbEdgCommHH.IsKey(EId)) {
+        ProbEdgCommHH.DelKey(EId);
+      }
     }
     if (PrNotE >= 1.0) {
       ProbEdgH.AddDat(EId, GetPrEPrecision(ProdH, AuxDPEdgVV, PrENoise));
@@ -308,6 +312,10 @@ public:
     ProbEdgH.AddDat(EId,1-PrNotE);
   }
   void inline AddECom(const int& EId, const int& CId, const double& PrECNew) {
+    if (PrECNew <= 0.0) {
+      DelECom(EId, CId);
+      return;
+    }
     double PrECOld = GetECom(EId, CId);
     if (! ProbEdgCommHH.IsKey(EId)) {
       TIntFltH EmptyEProdH(NumComs);

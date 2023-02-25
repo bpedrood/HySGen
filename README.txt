@@ -69,7 +69,7 @@ Parameters:
 Usage:
 
 Discover 2 communities from the synthtic hypergraph (under synthetic_data/):
-./hysgen_main -i:./synthetic_data/synthetic.hyperedges -o:./synthetic_res -c:2 -ic:0.3 -sr:0.1 -th:0.08 -rs:100
+./hysgen_main -i:./synthetic_data/synthetic.hyperedges -o:./synthetic_res -c:2 -th:0.1 -rs:1
 
 Discover 309 communities from the NSF collaboration hypergraph:
 ./hysgen_main -i:./Data/NSF/hypergraph.hyperedges -o:./out_communities -c:309 -mc:3 -ic:0.1 -in:0.001 -rw:0.0001 -sa:0.95 -sz:0.01
